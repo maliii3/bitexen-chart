@@ -17,7 +17,7 @@ var isAPIconnected = false;
 
 var app = express();
 
-var server = app.listen(3000,listening);
+var server = app.listen(process.env.PORT || 3000,listening);
 
 function listening () {
     console.log('listening...');
@@ -31,7 +31,7 @@ var realCurrentJSON = JSON.parse(currentSec);
 function getDateStamp(){
 
     var today = new Date() ;
-    
+
     var year = today.getFullYear();
     var month = today.getMonth() + 1;
     var day = today.getDate();
