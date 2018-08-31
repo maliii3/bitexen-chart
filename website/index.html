@@ -1,0 +1,105 @@
+<!DOCTYPE HTML>
+<html>
+<head> 
+<meta http-equiv="refresh" content="60"/>
+<script type="text/javascript" src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+<script>
+window.onload = function () {
+
+var myDataPoints = [];
+
+var today = new Date().getDate() + "." + (new Date().getMonth()+1) + "." + new Date().getFullYear();
+
+var chart = new CanvasJS.Chart("chartContainer", {
+	animationEnabled: true,
+	theme: "dark2",
+	title:{
+		text: today+"'s BITEXEN/TRY CHART"
+  },
+  axisY:{
+		includeZero: false
+	},
+	data: [{        
+    type: "line",  
+    lineColor : "green",
+    color : "green",
+		dataPoints : myDataPoints
+	}]
+});
+// updateData();
+// var xValue = 0;
+// var newDataCount = 0;
+
+// function addData(data) {
+// 	if(newDataCount != 1) {
+// 		$.each(data, function(key, value) {
+//       // console.log(data);
+//       console.log(data.x);
+      
+//       var date = new Date();
+
+//       var day = date.getDate();
+//       var month = date.getMonth();
+//       var year = date.getYear();
+      
+//       var hour = data.x.slice(0,2);
+//       var minutes = data.x.slice(3,5);
+//       var seconds = data.x.slice(6);
+
+
+// 			dataPoints.push({x: new Date(year,month,day,hour,minutes,seconds), y: parseFloat(data.y)});
+// 			xValue++;
+// 			yValue = parseFloat(data.y);
+// 		});
+// 	} else {
+// 		//dataPoints.shift();
+// 		dataPoints.push({x: data[0], y: parseInt(data[1])});
+// 		xValue++;
+// 		yValue = parseInt(data[1]);
+// 	}
+	
+// 	newDataCount = 1;
+// 	chart.render();
+// 	setTimeout(updateData, 1000);
+// }
+
+// function updateData() {
+// 	$.getJSON("/api/seconds", addData);
+// }
+
+
+$.getJSON("/api/daily", function(data) { 
+    $.each(data, function(key, value){
+      console.log(myDataPoints);
+      $.each(value, function(realKey,realValue){
+
+      var now = new Date();
+
+      var date = now.getDate();
+      var year = now.getFullYear();
+      var month = now.getMonth();
+
+
+      var hour = realValue.x.slice(0,2);
+      var minutes = realValue.x.slice(3,5);
+      var seconds = realValue.x.slice(6);
+
+
+      myDataPoints.push({x: new Date(year,month,date,hour,minutes,seconds), y: parseFloat(realValue.y)});
+		    
+		
+
+      delete now;
+    });
+  });
+chart.render();
+
+});
+}
+</script>
+</head>
+<body>
+<div id="chartContainer" style="height: 400px; width: 100%;"></div>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+</body>
+</html>
