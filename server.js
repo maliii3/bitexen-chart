@@ -106,7 +106,7 @@ function parseJSONFromAPI(err,response){
 
 }
 
-schedule.scheduleJob('30 * * * * *', addValueWithTimeStamp);
+schedule.scheduleJob('*/5 * * * * *', addValueWithTimeStamp);
 
 app.get('/api/:time_interval',sendValues);
 
