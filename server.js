@@ -24,7 +24,7 @@ function listening () {
 }
 
 //Holds the Current Value of the stock as a json I dont think this is a great way but...
-var currentSec = fs.readFileSync('data/current.json');
+var currentSec = fs.readFileSync('.data/current.json');
 var realCurrentJSON = JSON.parse(currentSec);
 
 //Creates a string as today's DD.MM.YYYY
@@ -70,7 +70,7 @@ createNew();
 schedule.scheduleJob('1 0 0 * * *',createNew);
 
 function createNew(){
-    fs.writeFileSync('data/' + getDateStamp() + '.json',JSON.stringify({
+    fs.writeFileSync('.data/' + getDateStamp() + '.json',JSON.stringify({
 
         "data":[
         ]
@@ -78,7 +78,7 @@ function createNew(){
     }, null, 2))
 }
 
-var daily = fs.readFileSync('data/' + getDateStamp() + '.json');
+var daily = fs.readFileSync('.data/' + getDateStamp() + '.json');
 
 var realValues = JSON.parse(daily);
 
@@ -143,7 +143,7 @@ function get15SecData(){
     realCurrentJSON["data"].y = bitData;
     }
     var currentData = JSON.stringify(realCurrentJSON, null, 2);
-    fs.writeFile('data/current.json', currentData,finished);
+    fs.writeFile('.data/current.json', currentData,finished);
 
     var realJ = JSON.parse(currentData);
     
@@ -165,7 +165,7 @@ function addValueWithTimeStamp() {
         realValues["data"].push({"x":timeStamp,"y":bitData});
     }
     var currentData = JSON.stringify(realValues, null, 2);
-    fs.writeFile('data/'+ getDateStamp() +'.json', currentData, finished);
+    fs.writeFile('.data/'+ getDateStamp() +'.json', currentData, finished);
 
     function finished(err){
         if(err){
@@ -178,7 +178,7 @@ function addValueWithTimeStamp() {
 
 function dailyData(){
 
-    var dailyJSON = fs.readFileSync('data/' + getDateStamp() + '.json');
+    var dailyJSON = fs.readFileSync('.data/' + getDateStamp() + '.json');
 
     var dailyArray = JSON.parse(dailyJSON);
 
