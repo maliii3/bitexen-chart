@@ -30,7 +30,9 @@ var realCurrentJSON = JSON.parse(currentSec);
 //Creates a string as today's DD.MM.YYYY
 function getDateStamp(){
 
-    var today = new Date() ;
+    var today = new Date();
+
+    today.setHours(today.getHours()+3);
 
     var year = today.getFullYear();
     var month = today.getMonth() + 1;
@@ -43,7 +45,10 @@ function getDateStamp(){
 
 //creates a string this time as HH.mm.ss
 function getTimeStamp(){
+
     var now = new Date();
+
+    now.setHours(now.getHours()+3);
 
     var hour = now.getHours();
     var minute = now.getMinutes();
@@ -106,7 +111,7 @@ function parseJSONFromAPI(err,response){
 
 }
 
-schedule.scheduleJob('*/5 * * * * *', addValueWithTimeStamp);
+schedule.scheduleJob('59 * * * * *', addValueWithTimeStamp);
 
 app.get('/api/:time_interval',sendValues);
 
