@@ -17,10 +17,10 @@ var isAPIconnected = false;
 
 var app = express();
 
-app.listen(config.port, listening);
+app.listen(process.env.PORT, listening);
 
 function listening () {
-    console.log('listening...');
+    console.log('listening... ananann');
 }
 
 //Holds the Current Value of the stock as a json I dont think this is a great way but...
