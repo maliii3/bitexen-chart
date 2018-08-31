@@ -20,7 +20,7 @@ var app = express();
 app.listen(process.env.PORT, listening);
 
 function listening () {
-    console.log('listening... ananann');
+    console.log('listening... asssssnanansn');
 }
 
 //Holds the Current Value of the stock as a json I dont think this is a great way but...
