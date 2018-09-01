@@ -63,7 +63,7 @@ function getTimeStamp(){
         realHour = hour;
     }
 
-    if (minutes<10){
+    if (minute<10){
         realMinute = "0" + minute;
     }
     else{
