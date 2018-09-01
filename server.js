@@ -89,7 +89,7 @@ if(!isAPIconnected){
 
 createNew();
 //If the daily file is not defined yet create a file with the today's name.
-schedule.scheduleJob('1 0 0 * * *',createNew);
+schedule.scheduleJob('3 0 0 * * *',createNew);
 
 function createNew(){
     fs.writeFileSync('data/' + getDateStamp() + '.json',JSON.stringify({
