@@ -17,11 +17,21 @@ var isAPIconnected = false;
 
 var app = express();
 
-app.listen(process.env.PORT, listening);
+app.listen(process.env.PORT || 3000, listening);
 
 function listening () {
     console.log('listening.');
 }
+
+
+// DATE EXTENSION
+
+Date.prototype.isValid = function () {
+    // An invalid date object returns NaN for getTime() and NaN is the only
+    // object not strictly equal to itself.
+    return this.getTime() === this.getTime();
+};  
+
 
 //Holds the Current Value of the stock as a json I dont think this is a great way but...
 var currentSec = fs.readFileSync('data/current.json');
@@ -118,10 +128,43 @@ function parseJSONFromAPI(err,response){
 
 }
 
-schedule.scheduleJob('59 * * * * *', addValueWithTimeStamp);
+schedule.scheduleJob('30 * * * * *', addValueWithTimeStamp);
 
 app.get('/api/:time_interval',sendValues);
 
+app.get('/api/:day/:month/:year',sendSpecificDateData);
+
+
+function sendSpecificDateData(request,response){
+
+    var link = request.params;
+
+    var willControlledDate = new Date(link.year,link.month,link.day);
+
+    if(willControlledDate.isValid()){
+
+        var fileDay = willControlledDate.getDate();
+        var fileMonth = willControlledDate.getMonth();
+        var fileYear = willControlledDate.getFullYear();
+
+        
+        if(fs.existsSync('data/' + fileDay + '.' + fileMonth + '.' + fileYear + '.json')){
+
+            var dailyJSON = fs.readFileSync('data/' + fileDay + '.' + fileMonth + '.' + fileYear + '.json');
+            var dailyArray = JSON.parse(dailyJSON);
+            response.send(dailyArray);
+        
+        } else {
+
+            response.send("Sorry... We don't have that file :(");
+        }
+
+    } else {
+
+        response.send('Sorry... Your requested '+link.day+'/'+link.month+'/'+link.year+' day is not valid!');
+    }
+}
+1
 function sendValues(request, response){
 
     var data = request.params;
@@ -194,6 +237,54 @@ function dailyData(){
 
     var dailyArray = JSON.parse(dailyJSON);
 
+    // console.log(dailyArray.data.length);
+
     return dailyArray;
 }
 
+function weeklyData(){
+
+    var lastWeek = new Date();
+
+    var weeklyJson = new JSON();
+
+    lastWeek.setDate(lastWeek.getDate()-7);
+
+    var weekDate = lastWeek.getDate();
+    var weekMonth = lastWeek.getMonth();
+    var weekYear = lastWeek.getFullYear();
+
+    if(fs.existsSync('data/' + weekDate + '.' + weekMonth + '.' + weekYear + '.json')){
+
+        for(var day = 0; day<6; day++ ){
+
+            lastWeek.setDate(lastWeek.getDate() + day);
+
+            weekDate = lastWeek.getDate();
+            weekMonth = lastWeek.getMonth();
+            weekYear = lastWeek.getFullYear();
+
+            var dailyJSON = fs.readFileSync('data/' + weekDate + '.' + weekMonth + '.' + weekYear + '.json');
+
+            var dailyArray = JSON.parse(dailyJSON);
+
+            for (var j = 0 ; j<dailyArray.data.length; j+=30){
+
+                
+
+
+
+            }
+    
+
+        }
+        
+    } else {
+
+        response.send("Sorry... We can't access weekly data :'( ");
+    }
+
+
+
+
+}
