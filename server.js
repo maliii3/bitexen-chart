@@ -20,7 +20,7 @@ var app = express();
 app.listen(process.env.PORT, listening);
 
 function listening () {
-    console.log('listening... asssssnanansn');
+    console.log('listening.');
 }
 
 //Holds the Current Value of the stock as a json I dont think this is a great way but...
@@ -54,16 +54,23 @@ function getTimeStamp(){
     var minute = now.getMinutes();
     var second = now.getSeconds();
 
-    if (hour<10 && minute<10)
-        var timeStamp = "0"+ hour + ":0" + minute + "." + second;
-    else if (hour<10 && minute>10)
-        var timeStamp = "0"+ hour + ":" + minute + "." + second;
-    else if (hour>10 && minute<10)
-        var timeStamp = hour + ":0" + minute + "." + second;
-    else
-        var timeStamp = hour + ":" + minute + "." + second;
+    var realHour,realMinute;
 
-    return timeStamp;
+    if (hour<10){
+        realHour = "0" + hour;
+    }
+    else {
+        realHour = hour;
+    }
+
+    if (minutes<10){
+        realMinute = "0" + minute;
+    }
+    else{
+        realMinute = minute;
+    }
+
+    return  realHour + ":" + realMinute + "." + second;
 }
 //Connect to the BITEXEN API immediately
 if(!isAPIconnected){
