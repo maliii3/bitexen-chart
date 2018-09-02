@@ -17,7 +17,7 @@ var isAPIconnected = false;
 
 var app = express();
 
-app.listen(process.env.PORT || 3000, listening);
+app.listen(process.env.PORT, listening);
 
 function listening () {
     console.log('listening.');
