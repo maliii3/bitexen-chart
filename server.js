@@ -87,7 +87,10 @@ if(!isAPIconnected){
     getJSON(apiURL,parseJSONFromAPI);
 }
 
-createNew();//If the daily file is not defined yet create a file with the today's name.
+//If the daily file is not defined yet create a file with the today's name.
+if(!fs.existsSync('data/' +getDateStamp()+ '.json')){
+    createNew();
+}
 
 schedule.scheduleJob('5 0 21 * * *',createNew);//Every 21:00.05 time during the day create a new JSON file. 21:00.05 because server is 3 hour early than Turkey.
 
