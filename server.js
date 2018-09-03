@@ -164,7 +164,6 @@ function sendSpecificDateData(request,response){
         response.send('Sorry... Your requested '+link.day+'/'+link.month+'/'+link.year+' day is not valid!');
     }
 }
-1
 function sendValues(request, response){
 
     var data = request.params;
