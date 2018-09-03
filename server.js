@@ -58,7 +58,7 @@ function getTimeStamp(){
 
     var now = new Date();
 
-    now.setHours(now.getHours()+3);
+    now.setHours(now.getHours()+3); //Server is in Europe, need to add 3 hours to fix the Timezone difference.
 
     var hour = now.getHours();
     var minute = now.getMinutes();
@@ -66,8 +66,8 @@ function getTimeStamp(){
 
     var realHour,realMinute;
 
-    if (hour<10){
-        realHour = "0" + hour;
+    if (hour<10){ //getHours() and getMinutes() functions return 1 digit char if it is less than 10. Example: If current time is 01:09  getHours() => 1 , getMinutes() => 9
+        realHour = "0" + hour; //So I label it as 2 digits.
     }
     else {
         realHour = hour;
@@ -80,18 +80,22 @@ function getTimeStamp(){
         realMinute = minute;
     }
 
-    return  realHour + ":" + realMinute + "." + second;
+    return  realHour + ":" + realMinute + "." + second; //Create a String formatted as HH:mm.ss
 }
 //Connect to the BITEXEN API immediately
 if(!isAPIconnected){
     getJSON(apiURL,parseJSONFromAPI);
 }
 
-createNew();
-//If the daily file is not defined yet create a file with the today's name.
-schedule.scheduleJob('5 0 21 * * *',createNew);
+createNew();//If the daily file is not defined yet create a file with the today's name.
+
+schedule.scheduleJob('5 0 21 * * *',createNew);//Every 21:00.05 time during the day create a new JSON file. 21:00.05 because server is 3 hour early than Turkey.
 
 function createNew(){
+
+    //Creates an empty JSON file named "DD.MM.YYYY" in the data directory in the server. 
+
+    //This part might be the worst piece of code you'll ever see.
     fs.writeFileSync('data/' + getDateStamp() + '.json',JSON.stringify({
 
         "data":[
@@ -100,84 +104,93 @@ function createNew(){
     }, null, 2))
 }
 
-var daily = fs.readFileSync('data/' + getDateStamp() + '.json');
+var daily = fs.readFileSync('data/' + getDateStamp() + '.json');// Reading the today's file 
 
-var realValues = JSON.parse(daily);
+var realValues = JSON.parse(daily);// Parsing today's file as a JSON.
 
 app.use(express.static('website'));
 
 var daily;
 
+
+//Connecting to the BITEXEN API. Fetch the current value of the BITEXEN/TRY.
 function parseJSONFromAPI(err,response){
 
-    if(err){
-        console.log('Someshit happened!');
+    if(err){//If some error happens
+        
+        console.log('Something happened!: ' + err);
         return;
     }
 
-    if(response.status=="success"){
+    if(response.status=="success"){//If API is connected
+
         if(!isAPIconnected){
         console.log('BITEXEN API connected!');
         isAPIconnected=true;
         }
 
-        bitData = response.data.ticker.last_price;
+        bitData = response.data.ticker.last_price; //Initialize bitData and update it.
+
     } else {
         console.log('Could not connect BITEXEN API!');
     }
 
 }
 
-schedule.scheduleJob('30 * * * * *', addValueWithTimeStamp);
+schedule.scheduleJob('30 * * * * *', addValueWithTimeStamp);// Scheduling addValueWithTimeStamp for every 30 seconds.
 
-app.get('/api/:time_interval',sendValues);
+app.get('/api/:time_interval',sendValues);// Get request for time intervals.
 
-app.get('/api/:day/:month/:year',sendSpecificDateData);
+app.get('/api/:day/:month/:year',sendSpecificDateData);// Get request for specific date.
 
 
+// This function parses the specified date through parameters of the request and sends user a JSON.
 function sendSpecificDateData(request,response){
 
     var link = request.params;
 
-    var willControlledDate = new Date(link.year,link.month,link.day);
+    var willControlledDate = new Date(link.year,link.month,link.day);//Create a new Date with a parameters.
 
-    if(willControlledDate.isValid()){
+    if(willControlledDate.isValid()){// If the date is valid...
 
         var fileDay = willControlledDate.getDate();
         var fileMonth = willControlledDate.getMonth();
         var fileYear = willControlledDate.getFullYear();
 
-        
-        if(fs.existsSync('data/' + fileDay + '.' + fileMonth + '.' + fileYear + '.json')){
 
-            var dailyJSON = fs.readFileSync('data/' + fileDay + '.' + fileMonth + '.' + fileYear + '.json');
-            var dailyArray = JSON.parse(dailyJSON);
-            response.send(dailyArray);
-        
-        } else {
+        if(fs.existsSync('data/' + fileDay + '.' + fileMonth + '.' + fileYear + '.json')){// Find the expected file.
 
-            response.send("Sorry... We don't have that file :(");
+            var dailyJSON = fs.readFileSync('data/' + fileDay + '.' + fileMonth + '.' + fileYear + '.json');// Read it.
+            var dailyArray = JSON.parse(dailyJSON);// Parse it a JSON.
+            response.send(dailyArray);// Send it to the user.
+        
+        } else {// If file does not exist...
+
+            response.send("Sorry... We don't have that file :(");// Give feedback to the user.
         }
 
-    } else {
+    } else {// If the given date is invalid...
 
-        response.send('Sorry... Your requested '+link.day+'/'+link.month+'/'+link.year+' day is not valid!');
+        response.send('Sorry... Your requested '+link.day+'/'+link.month+'/'+link.year+' day is not valid!');// Give proper massage to the user.
     }
 }
+
+
 function sendValues(request, response){
 
     var data = request.params;
 
-    if (data.time_interval==='Weekly' || data.time_interval==='weekly'){
+    if (data.time_interval==='Weekly' || data.time_interval==='weekly'){// If wanted data is "Weekly".
 
-        response.send("Trying to implement this but I suck at node and js :(");
+        response.send("Trying to implement this but I suck at node and js :("); // Working on...
     }
-    else if (data.time_interval==='Daily' || data.time_interval==='daily'){
-        response.send(dailyData());
-    }
-    else if (data.time_interval==='seconds'){
+    else if (data.time_interval==='Daily' || data.time_interval==='daily'){// If wanted data is "Daily".
 
-        response.send(get15SecData());
+        response.send(dailyData());// Send daily data to user.
+    }
+    else if (data.time_interval==='seconds'){// If wanted data is for now.
+
+        response.send(currentData());// Send current data to user.
 
     }
     else{
@@ -186,62 +199,74 @@ function sendValues(request, response){
     }
 }
 
-function get15SecData(){
+function currentData(){// Sends current data to the user.
 
-    var timeStamp = getTimeStamp();
+    var timeStamp = getTimeStamp();// Today's file name.
 
-    getJSON(apiURL,parseJSONFromAPI);
+    getJSON(apiURL,parseJSONFromAPI);// Connect to the api and fetch the current value for BITEXEN.
 
-    if ( timeStamp!=undefined && bitData !=undefined){
-    realCurrentJSON["data"].x = timeStamp;
+    if ( timeStamp!=undefined && bitData !=undefined){//If bitData (BITEXEN value) or timeStamp is defined...
+    realCurrentJSON["data"].x = timeStamp; // ...assign these values to JSON file.
     realCurrentJSON["data"].y = bitData;
     }
-    var currentData = JSON.stringify(realCurrentJSON, null, 2);
-    fs.writeFile('data/current.json', currentData,finished);
+    var currentData = JSON.stringify(realCurrentJSON, null, 2);// Stringfy the JSON file structured like JSON (looks like JSON but it is string)
+    
+    fs.writeFile('data/current.json', currentData,finished);// Write the stringfied JSON into "current.json" file for consistency.
 
-    var realJ = JSON.parse(currentData);
+    var realJ = JSON.parse(currentData);// Parse it as Json.
     
     function finished(err){
+
+        if(err){
+            console.log("Something went wrong: " + err);
+            return;
+        }
+
         console.log("Added Current Data!");
     }
 
-    return realJ["data"];
+    return realJ["data"];// Send it to the user.
 }
+
+// This function pushes data to the current day's JSON file.
+// Graph's data points need 2 parameters to initialize.
+// Pushed data type:
+// One of them is "x" => timeStamp (as HH:mm.ss).
+// One of them is "y" => price of the BITEXEN.
 
 function addValueWithTimeStamp() {
 
-    var timeStamp = getTimeStamp(); 
+    var timeStamp = getTimeStamp();// Creates a String as current time HH:mm.ss .
 
-    getJSON(apiURL, parseJSONFromAPI);
+    getJSON(apiURL, parseJSONFromAPI);// Connect to the BITEXEN API
 
-    if ( timeStamp!=undefined && bitData !=undefined){
+    if ( timeStamp!=undefined && bitData !=undefined){// If bitData fetched from API
 
-        realValues["data"].push({"x":timeStamp,"y":bitData});
+        realValues["data"].push({"x":timeStamp,"y":bitData});// Push it with the timeStamp.
     }
-    var currentData = JSON.stringify(realValues, null, 2);
-    fs.writeFile('data/'+ getDateStamp() +'.json', currentData, finished);
+    var currentData = JSON.stringify(realValues, null, 2); // Stringfy the JSON file structured like JSON (looks like JSON but it is string).
+
+    fs.writeFile('data/'+ getDateStamp() +'.json', currentData, finished);// Write it to current day's file in order to save the data (Consistency?).
 
     function finished(err){
         if(err){
-            console.log(err);
+            console.log('Something is not good :' + err);
             return;
         }
         console.log('Data is set!');
     }
 }
 
-function dailyData(){
+function dailyData(){ // Returns the data of today as JSON.
 
-    var dailyJSON = fs.readFileSync('data/' + getDateStamp() + '.json');
+    var dailyJSON = fs.readFileSync('data/' + getDateStamp() + '.json'); // Reads todays file.
 
-    var dailyArray = JSON.parse(dailyJSON);
-
-    // console.log(dailyArray.data.length);
+    var dailyArray = JSON.parse(dailyJSON); // Parses it as JSON.
 
     return dailyArray;
 }
 
-function weeklyData(){
+function weeklyData(){ // Still working on this one I can't even understand my code.
 
     var lastWeek = new Date();
 
