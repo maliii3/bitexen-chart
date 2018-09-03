@@ -12,7 +12,7 @@ This project does not have any relation with bitexen.com. It is just made for le
 <h3>
 Commercial Use:
 </h3>
-Code of the graphic taken from CanvasJS. I highly suggest you to not use BITEXEN-CHART in a "commercial use". It may cause you some copyright issues because I dont have CanvasJS license.
+Template code of the graph taken from CanvasJS. I highly suggest you to not use BITEXEN-CHART in a "commercial use". It may cause you some copyright issues because I don't have CanvasJS license.
 
 <h3>
 About BITEXEN-CHART:
