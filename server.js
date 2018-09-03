@@ -202,7 +202,7 @@ function get15SecData(){
     var realJ = JSON.parse(currentData);
     
     function finished(err){
-        console.log("Added Current Data.");
+        console.log("Added Current Data!");
     }
 
     return realJ["data"];
