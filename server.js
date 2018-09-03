@@ -10,7 +10,7 @@ var schedule = require('node-schedule');
 
 var apiURL = 'https://www.bitexen.com/api/v1/ticker/EXENTRY/';
 
-//This holds the data for the BITEXEN/TRY value
+//This holds the data for the BITEXEN/TRY value.
 var bitData;
 
 var isAPIconnected = false;
