@@ -10,8 +10,10 @@ var schedule = require('node-schedule');
 
 var apiURL = 'https://www.bitexen.com/api/v1/ticker/EXENTRY/';
 
-//This holds the data for the BITEXEN/TRY value.
+//This holds the data for the BITEXEN/TRY value
 var bitData;
+
+var daily;
 
 var isAPIconnected = false;
 
@@ -92,7 +94,7 @@ if(!fs.existsSync('data/' +getDateStamp()+ '.json')){
     createNew();
 }
 
-schedule.scheduleJob('5 0 21 * * *',createNew);//Every 21:00.05 time during the day create a new JSON file. 21:00.05 because server is 3 hour early than Turkey.
+schedule.scheduleJob('10 6 22 * * *', createNew);//Every 21:00.01 time during the day create a new JSON file. 21:00.05 because server is 3 hour early than Turkey.
 
 function createNew(){
 
@@ -104,17 +106,16 @@ function createNew(){
         "data":[
         ]
     
-    }, null, 2))
-}
+    }, null, 2));
+    console.log('Created a new file as: ' + getDateStamp());
 
-var daily = fs.readFileSync('data/' + getDateStamp() + '.json');// Reading the today's file 
+    daily = fs.readFileSync('data/' + getDateStamp() + '.json');// Reading the today's file 
+
+}
 
 var realValues = JSON.parse(daily);// Parsing today's file as a JSON.
 
 app.use(express.static('website'));
-
-var daily;
-
 
 //Connecting to the BITEXEN API. Fetch the current value of the BITEXEN/TRY.
 function parseJSONFromAPI(err,response){
