@@ -15,6 +15,8 @@ var bitData;
 
 var daily;
 
+var realValues;
+
 var isAPIconnected = false;
 
 var app = express();
@@ -94,7 +96,7 @@ if(!fs.existsSync('data/' +getDateStamp()+ '.json')){
     createNew();
 }
 
-schedule.scheduleJob('10 6 22 * * *', createNew);//Every 21:00.01 time during the day create a new JSON file. 21:00.05 because server is 3 hour early than Turkey.
+schedule.scheduleJob('1 0 22 * * *', createNew);//Every 21:00.01 time during the day create a new JSON file. 21:00.01 because server is 3 hour early than Turkey.
 
 function createNew(){
 
@@ -110,10 +112,8 @@ function createNew(){
     console.log('Created a new file as: ' + getDateStamp());
 
     daily = fs.readFileSync('data/' + getDateStamp() + '.json');// Reading the today's file 
-
+    realValues = JSON.parse(daily);// Parsing today's file as a JSON.
 }
-
-var realValues = JSON.parse(daily);// Parsing today's file as a JSON.
 
 app.use(express.static('website'));
 
