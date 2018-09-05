@@ -92,27 +92,34 @@ if(!isAPIconnected){
 }
 
 //If the daily file is not defined yet create a file with the today's name.
-if(!fs.existsSync('data/' +getDateStamp()+ '.json')){
+if(!fs.existsSync('data/' + getDateStamp() + '.json')){
     createNew();
 }
 
-schedule.scheduleJob('1 0 22 * * *', createNew);//Every 21:00.01 time during the day create a new JSON file. 21:00.01 because server is 3 hour early than Turkey.
+schedule.scheduleJob('1 0 22 * * *', createNew);// Every 21:00.01 time during the day create a new JSON file. 21:00.01 because server is 3 hour early than Turkey.
 
 function createNew(){
 
     //Creates an empty JSON file named "DD.MM.YYYY" in the data directory in the server. 
 
-    //This part might be the worst piece of code you'll ever see.
-    fs.writeFileSync('data/' + getDateStamp() + '.json',JSON.stringify({
-
-        "data":[
-        ]
     
-    }, null, 2));
-    console.log('Created a new file as: ' + getDateStamp());
+    var timeStamp = getDateStamp();
 
-    daily = fs.readFileSync('data/' + getDateStamp() + '.json');// Reading the today's file 
-    realValues = JSON.parse(daily);// Parsing today's file as a JSON.
+    if(!fs.existsSync('data/' + timeStamp + '.json')){
+        //This part might be the worst piece of code you'll ever see.
+        fs.writeFileSync('data/' + timeStamp + '.json',JSON.stringify({
+
+            "data":[
+            ]
+        
+        }, null, 2));
+        console.log('Created a new file as: ' + timeStamp);
+    
+        daily = fs.readFileSync('data/' + timeStamp + '.json');// Reading the today's file 
+        realValues = JSON.parse(daily);// Parsing today's file as a JSON.
+    }
+
+    
 }
 
 app.use(express.static('website'));
@@ -241,6 +248,7 @@ function currentData(){// Sends current data to the user.
 function addValueWithTimeStamp() {
 
     var timeStamp = getTimeStamp();// Creates a String as current time HH:mm.ss .
+    var dateStamp = getDateStamp();
 
     getJSON(apiURL, parseJSONFromAPI);// Connect to the BITEXEN API
 
@@ -250,7 +258,7 @@ function addValueWithTimeStamp() {
     }
     var currentData = JSON.stringify(realValues, null, 2); // Stringfy the JSON file structured like JSON (looks like JSON but it is string).
 
-    fs.writeFile('data/'+ getDateStamp() +'.json', currentData, finished);// Write it to current day's file in order to save the data (Consistency?).
+    fs.writeFile('data/'+ dateStamp +'.json', currentData, finished);// Write it to current day's file in order to save the data (Consistency?).
 
     function finished(err){
         if(err){
@@ -263,7 +271,9 @@ function addValueWithTimeStamp() {
 
 function dailyData(){ // Returns the data of today as JSON.
 
-    var dailyJSON = fs.readFileSync('data/' + getDateStamp() + '.json'); // Reads todays file.
+    var dateStamp = getDateStamp();
+
+    var dailyJSON = fs.readFileSync('data/' + dateStamp + '.json'); // Reads todays file.
 
     var dailyArray = JSON.parse(dailyJSON); // Parses it as JSON.
 
