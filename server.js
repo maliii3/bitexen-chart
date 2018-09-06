@@ -148,7 +148,7 @@ function parseJSONFromAPI(err,response){
 
 }
 
-schedule.scheduleJob('01 33 20 * * *', logDate);
+schedule.scheduleJob('01 0 20 * * *', logDate);
 
 function logDate(){
 
