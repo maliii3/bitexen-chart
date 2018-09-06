@@ -148,11 +148,14 @@ function parseJSONFromAPI(err,response){
 
 }
 
-schedule.scheduleJob('*/10 * * * * *',function(
-var newDate = Date();
+schedule.scheduleJob('25 25 20 * * *', logDate);
 
-console.log(newDate.getMinutes(), newDate.getHours(), newDate.getSeconds());
-                    ));
+function logDate(){
+
+    var time = new Date();
+
+    console.log(time.getDate(),time.getHours(),time.getMinutes(),time.getSeconds());
+}
 
 schedule.scheduleJob('30 * * * * *', addValueWithTimeStamp);// Scheduling addValueWithTimeStamp for every 30 seconds.
 
