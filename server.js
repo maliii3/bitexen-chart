@@ -96,7 +96,7 @@ if(!fs.existsSync('data/' + getDateStamp() + '.json')){
     createNew();
 }
 
-schedule.scheduleJob('1 0 22 * * *', createNew);// Every 21:00.01 time during the day create a new JSON file. 21:00.01 because server is 3 hour early than Turkey.
+schedule.scheduleJob('01 31 20 * * *', createNew);// Every 21:00.01 time during the day create a new JSON file. 21:00.01 because server is 3 hour early than Turkey.
 
 function createNew(){
 
