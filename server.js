@@ -117,6 +117,10 @@ function createNew(){
     
         daily = fs.readFileSync('data/' + timeStamp + '.json');// Reading the today's file 
         realValues = JSON.parse(daily);// Parsing today's file as a JSON.
+    } 
+    else 
+    {
+        console.log('File is not created!')
     }
 
     
@@ -146,15 +150,6 @@ function parseJSONFromAPI(err,response){
         console.log('Could not connect BITEXEN API!');
     }
 
-}
-
-schedule.scheduleJob('01 0 20 * * *', logDate);
-
-function logDate(){
-
-    var time = new Date();
-
-    console.log(time.getDate(),time.getHours(),time.getMinutes(),time.getSeconds());
 }
 
 schedule.scheduleJob('30 * * * * *', addValueWithTimeStamp);// Scheduling addValueWithTimeStamp for every 30 seconds.
