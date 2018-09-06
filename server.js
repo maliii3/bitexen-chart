@@ -148,6 +148,12 @@ function parseJSONFromAPI(err,response){
 
 }
 
+schedule.scheduleJob('*/10 * * * * *',function(
+var newDate = Date();
+
+console.log(newDate.getMinutes(), newDate.getHours(), newDate.getSeconds());
+                    ));
+
 schedule.scheduleJob('30 * * * * *', addValueWithTimeStamp);// Scheduling addValueWithTimeStamp for every 30 seconds.
 
 app.get('/api/:time_interval',sendValues);// Get request for time intervals.
