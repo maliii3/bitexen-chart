@@ -7,7 +7,7 @@ https://bitexen-chart.herokuapp.com/
 <strong>Disclaimer:</strong> 
 </h3>
 
-This project does not have any relation with bitexen.com. It is just made for learning purposes. Graph can be wrong and might misguide you. Do not take it as a investment advice.
+This project is not associated with bitexen.com. It is just made for learning purposes. Graph can be wrong and might misguide you. Do not take it as a investment advice.
 
 <h3>
 Commercial Use:
